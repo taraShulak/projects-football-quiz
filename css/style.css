@@ -134,6 +134,7 @@ body {
 
 .timer {
   color: red;
+  z-index: -1;
 }
 
 .result {

@@ -1,6 +1,6 @@
 const questions = ['Who won the first Premier League title?',
   'This club has won the most Champions League titles?',
-  'Who was the best football player of Europe in 1998?']/*
+  'Who was the best football player of Europe in 1998?',
   'Who was the first Italian manager to win the Premier League?',
   'How many clubs played in the first Premier League?',
   'Which goalkeeper has the record of 138 clean sheets for the same Premier League team?',
@@ -8,7 +8,7 @@ const questions = ['Who won the first Premier League title?',
   `Which country calls football "calcio"?`,
   'Who has scored the most number of goals (16) in World Cup history?',
   'Which player won Champions League with three different clubs?'
-]*/
+]
 const answers = [
   ['Liverpool FC', 'Manchester United FC' , 'Arsenal FC', 'Blackbern Rovers FC'],
   ['AC Milan', 'FC Real Madrid', 'Barcelona FC', 'Liverpool FC'],
@@ -35,7 +35,7 @@ progressLine.style.gridTemplateColumns =  `repeat(${questions.length}, 1fr)`
 start.addEventListener('click', createQuestion)
 mainAnswer.addEventListener('click', chouseAnswer)
 answerButton.addEventListener('click', verify)
-mainTimer.remove()
+
 let seconds = 15
 let interval
 let indexQuestion= 0;
@@ -54,7 +54,6 @@ function endQuiz() {
     } else {
       massege = `You know everything about football !!!!!`
     }
-    console.log('',massege);
     
   const text = `
     <div class="main__result">
@@ -64,8 +63,8 @@ function endQuiz() {
     `
     mainQuestion.insertAdjacentHTML('afterbegin', text)
     answerButton.innerHTML = 'Good Luck'
+    mainTimer.style.zIndex = '-1'
     mainQuestion.style.backgroundImage = `url(/img/img-end.jpeg)`
-    console.log('end');
     
     correctAnswer = 0
 }
@@ -84,7 +83,8 @@ function progress(colorItem){
   progressLine.insertAdjacentHTML('beforeend', textItem)
 }
 
-function verify(event) {
+function verify(event) { 
+ 
   if (indexQuestion == questions.length && inProgres == true) {   
     clearMain()
     endQuiz()
@@ -94,20 +94,31 @@ function verify(event) {
 
   if(allredyAnswer) {
     createQuestion(event, indexQuestion)
-  } else if ( indexQuestion < questions.length){
-    if(selectNumber == answerVerify[indexQuestion]) {
-      document.querySelector(`.item-${selectNumber}`).classList.add('right__item')
-      answerButton.innerHTML = 'You are absolutely right!!!  Next question'
-      correctAnswer++;
-      allredyAnswer = true
-      progress('green')
-    } else {
-      document.querySelector(`.item-${selectNumber}`).classList.add('wrong__item')
-      answerButton.innerHTML = 'You are mistaken!!!  Next question'
-      allredyAnswer = true
-      progress('red')
-    }
-    indexQuestion++;    
+  } else 
+      if ( indexQuestion < questions.length && seconds > 0){
+          if(selectNumber == answerVerify[indexQuestion]) {
+            document.querySelector(`.item-${selectNumber}`).classList.add('right__item')
+            answerButton.innerHTML = 'You are absolutely right!!!  Next question'
+            correctAnswer++;
+            allredyAnswer = true
+            progress('green')
+            clearInterval(interval)
+          } else {
+            document.querySelector(`.item-${selectNumber}`).classList.add('wrong__item')
+            answerButton.innerHTML = 'You are mistaken!!!  Next question'
+            allredyAnswer = true
+            progress('red')
+            clearInterval(interval)
+          }
+          indexQuestion++;    
+  }
+  
+  if(seconds == 0 && indexQuestion < questions.length) {
+    progress('blue')
+    clearInterval(interval)
+    indexQuestion++
+    answerButton.innerHTML = 'Time is out!!!  You must think quiqly!!!'
+    allredyAnswer = true
   }
 }
 
@@ -136,8 +147,9 @@ function clearMain(){
 }
 
 function createQuestion(event, number) {  
-  
+  mainTimer.style.zIndex = '1';
   number = number ? number : 0;  
+
   if( inProgres == false &&  indexQuestion == questions.length){ 
     deleteProgress()
     mainQuestion.firstElementChild.remove()
@@ -145,6 +157,7 @@ function createQuestion(event, number) {
   } else if(inProgres == false) {
     mainQuestion.firstElementChild.remove()
   }
+
   if(number > 0) {
     clearMain()    
   } else if( event.target == start && inProgres == true) {   
@@ -176,11 +189,15 @@ function createQuestion(event, number) {
     allredyAnswer = false  
     inProgres = true
   }
+
+    seconds = 15
+    timer()
+
 }
 
 function timer() {
   clearInterval(interval)
-  mainTimer.innerHTML = '3'
+  mainTimer.innerHTML = '10'
   interval = setInterval( startTimer, 1000)
 }
 
@@ -191,8 +208,7 @@ function startTimer() {
   } else {
     mainTimer.innerHTML = `${seconds}`
   }
-  if(seconds == 0) {
-    indexQuestion++
+  if(seconds == 0 && allredyAnswer == false) {
     verify()
   }
 }
