@@ -48,7 +48,7 @@ let inProgres = false;
 function endQuiz() {
   let massege;
   if(correctAnswer < 5 ) {
-    massege = `Football's history is not your strong side`
+    massege = `Football's history is not your strong side, You can try again`
   } else  if(correctAnswer < 8 ){
     massege = `You know football's history very good`
     } else {
@@ -117,7 +117,7 @@ function verify(event) {
     progress('blue')
     clearInterval(interval)
     indexQuestion++
-    answerButton.innerHTML = 'Time is out!!!  You must think quiqly!!!'
+    answerButton.innerHTML = 'Time is out!!!  You must think quickly!!!'
     allredyAnswer = true
   }
 }
